@@ -1,0 +1,41 @@
+# This workflow will build a Java project with Ant
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-ant
+
+name: Java CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Run JMeter Tests
+      uses: QAInsights/PerfAction@v5.6.2
+      with: 
+        test-plan-path: ./script/getbaidu.jmx
+        args: "-e -o ./reports/html"
+
+    - name: Upload Results
+      uses: actions/upload-artifact@v3
+      with: 
+        name: jmeter-results
+        path: result.jtl
+        if-no-files-found: error
+
+    - name: Upload HTML Reports
+      uses: actions/upload-artifact@v3
+      with:
+        name: jmeter-html-reports
+        path: reports
+        if-no-files-found: error
+        
+            
